@@ -10,13 +10,17 @@ from torchvision import datasets
 from torch.autograd import Variable
 from config.config import args
 from tqdm import tqdm
-from model_dense import *
 from load_data import * 
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from utils.metric_train import create_metrics
 
+if args.TEST_BASELINE:
+    from model_dense import *
+else:
+    from model_shapeconv import *
+    args.EXP_NAME = 'ShapeMoire'
 
 def compute_l1_loss(input, output):
     return torch.mean(torch.abs(input-output))
@@ -85,13 +89,11 @@ class LossNetwork(torch.nn.Module):
             '8': "relu2",
             '13': "relu3",
             '22': "relu4",
-            '31': "relu5",        #1_2 to 5_2
+            '31': "relu5",
         }
         
     def forward(self, x):
         output = {}
-        #import pdb
-        #pdb.set_trace()
         for name, module in self.vgg_layers._modules.items():
             x = module(x)
             if name in self.layer_name_mapping:
@@ -123,6 +125,17 @@ os.makedirs(save_path, exist_ok=True)
 
 cuda = True if torch.cuda.is_available() else False
 
+# random seed
+random.seed(args.SEED)
+np.random.seed(args.SEED)
+torch.manual_seed(args.SEED)
+torch.cuda.manual_seed_all(args.SEED)
+if args.SEED == 0:
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+else:
+    torch.backends.cudnn.deterministic = False
+    torch.backends.cudnn.benchmark = True
 
 # Loss functions
 criterion_GAN = torch.nn.MSELoss()
@@ -150,8 +163,6 @@ if cuda:
     lossnet = LossNetwork().float().cuda()
     wavelet_dec = wavelet_dec.cuda()
     wavelet_rec = wavelet_rec.cuda()
-    #generator=nn.DataParallel(generator,device_ids=[0,1])
-    #discriminator=nn.DataParallel(discriminator,device_ids=[0,1])
 
 if args.LOAD_EPOCH != 0:
     generator = generator.load_state_dict(torch.load('./saved_models/facades2/lastest.pth' ))#%  args.epoch))
@@ -226,20 +237,21 @@ for epoch in range(args.LOAD_EPOCH+1, args.EPOCHS+1):
             param_group["lr"] = current_lr
             
         # Model inputs
-        img_train = data['in_img']
-        label = data['label']
+        img_train = data['in_img'].cuda()
+        label = data['label'].cuda()
 
-        '''
+        
         #ShapeMoire
-        base_img_train = torch.mean(img_train, dim = [2,3], keepdim = True)
-        shape_img_train = img_train - base_img_train
-        img_train = torch.cat((img_train, shape_img_train), dim=0)
-        base_label = torch.mean(label, dim = [2,3], keepdim = True)
-        shape_label = label - base_label
-        label = torch.cat((label, shape_label), dim=0)
-        '''
+        if not args.TEST_BASELINE:
+            base_img_train = torch.mean(img_train, dim = [2,3], keepdim = True)
+            shape_img_train = img_train - base_img_train
+            img_train = torch.cat((img_train, shape_img_train), dim=0)
+            base_label = torch.mean(label, dim = [2,3], keepdim = True)
+            shape_label = label - base_label
+            label = torch.cat((label, shape_label), dim=0)
+        
 
-        real_A, real_B = Variable(img_train.cuda()), Variable(label.cuda())
+        real_A, real_B = Variable(img_train), Variable(label)
         #pdb.set_trace() 
         x_r = (real_A[:,0,:,:]*255-105.648186)/255.+0.5
         x_g = (real_A[:,1,:,:]*255-95.4836)/255.+0.5
@@ -276,7 +288,6 @@ for epoch in range(args.LOAD_EPOCH+1, args.EPOCHS+1):
        
         # Pixel-wise loss
         loss_pixel = criterion_pixelwise(fake_B, real_B)   #.................................
-
 
         # preceptual loss
         loss_fake_B = lossnet(fake_B*255-tensor_c)
