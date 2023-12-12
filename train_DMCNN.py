@@ -7,11 +7,12 @@ from tqdm import tqdm
 from dataset.load_data import *
 from utils.metric_train import create_metrics
 
-if args.TEST_BASELINE:
-    from net import MoireCNN
+if args.USE_BASELINE:
+    from model.net import MoireCNN
 else:
-    from net_shapeconv import MoireCNN
-    args.EXP_NAME = 'ShapeMoire'
+    from model.net_shapeconv import MoireCNN
+    # args.EXP_NAME = 'ShapeMoire'
+
 
 def train(model, train_loader, criterion, epoch, lr, device, iters, optimizer):
     model.train()
@@ -21,11 +22,11 @@ def train(model, train_loader, criterion, epoch, lr, device, iters, optimizer):
         img_train = data['in_img'].to(device)
         label = data['label'].to(device)
 
-        if not args.TEST_BASELINE:
-            base_img_train = torch.mean(img_train, dim = [2,3], keepdim = True)
+        if not args.USE_BASELINE:
+            base_img_train = torch.mean(img_train, dim=[2, 3], keepdim=True)
             shape_img_train = img_train - base_img_train
             img_train = torch.cat((img_train, shape_img_train), dim=0)
-            base_label = torch.mean(label, dim = [2,3], keepdim = True)
+            base_label = torch.mean(label, dim=[2, 3], keepdim=True)
             shape_label = label - base_label
             label = torch.cat((label, shape_label), dim=0)
 
@@ -37,7 +38,7 @@ def train(model, train_loader, criterion, epoch, lr, device, iters, optimizer):
         iters += 1
 
         total_loss += loss.item()
-        avg_train_loss = total_loss / (batch_idx+1)
+        avg_train_loss = total_loss / (batch_idx + 1)
 
         desc = 'Training  : Epoch %d, lr %.7f, Avg. Loss = %.5f' % (epoch, lr, avg_train_loss)
         tbar.set_description(desc)
@@ -68,15 +69,17 @@ def val(model, val_loader, epoch, device, compute_metrics):
         total_psnr += cur_psnr
 
     loss_sum /= idx
-    total_psnr /= (batch_idx+1)    
-    
+    total_psnr /= (batch_idx + 1)
+
     return total_psnr, loss_sum
+
 
 def weights_init(m):
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
         m.weight.data.normal_(mean=0.0, std=0.01)
         m.bias.data.fill_(0)
+
 
 if __name__ == '__main__':
     args.LOGS_DIR = os.path.join(args.SAVE_PREFIX, args.EXP_NAME, 'logs')
@@ -100,7 +103,7 @@ if __name__ == '__main__':
         device = "cuda"
     else:
         device = "cpu"
-    
+
     # dataloader
     train_path = args.TRAIN_DATASET
     train_loader = create_dataset(args, data_path=train_path, mode='train')
@@ -108,7 +111,7 @@ if __name__ == '__main__':
     args.BATCH_SIZE = 1
     val_loader = create_dataset(args, data_path=Validate_path, mode='test')
 
-    compute_metrics = create_metrics(args, device=device)
+    compute_metrics = create_metrics(args, device=device, use_fast=True)
 
     print('loaded dataset successfully!')
     model = MoireCNN().to(device)
@@ -127,7 +130,7 @@ if __name__ == '__main__':
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=0.00001)
 
-    for epoch in range(args.LOAD_EPOCH+1, args.EPOCHS+1):
+    for epoch in range(args.LOAD_EPOCH + 1, args.EPOCHS + 1):
         iters, avg_train_loss = train(model, train_loader, criterion, epoch, lr, device, iters, optimizer)
 
         cur_psnr, current_loss = val(model, val_loader, epoch, device, compute_metrics)
@@ -138,7 +141,7 @@ if __name__ == '__main__':
         if current_loss > last_loss and lr > 1e-6:
             lr *= 0.1
         last_loss = current_loss
-        
+
         # save best epoch
         bestfilename = args.NETS_DIR + f'/best_epoch{epoch}_{cur_psnr:.4f}.tar'
 

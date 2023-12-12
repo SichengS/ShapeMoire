@@ -21,8 +21,8 @@ class ShapeConv2d(Module):
                      'out_channels', 'kernel_size', 'D_mul']
     __annotations__ = {'bias': Optional[torch.Tensor]}
 
-    def __init__(self, in_channels, out_channels, kernel_size, D_mul=None, stride=1,
-                 padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros'):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1,
+                 padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros', D_mul=None):
         super(ShapeConv2d, self).__init__()
 
         kernel_size = _pair(kernel_size)

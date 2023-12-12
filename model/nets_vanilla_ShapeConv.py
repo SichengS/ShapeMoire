@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 from torch.nn.parameter import Parameter
-from model.ShapeConv import ShapeConv2d
+from ShapeConv import ShapeConv2d
 
 class my_model(nn.Module):
     def __init__(self,

@@ -16,25 +16,29 @@ class create_metrics():
        thus we benchmark evaluations for all methods with a fast pytorch SSIM implementation referred from
        "https://github.com/jorge-pessoa/pytorch-msssim/blob/master/pytorch_msssim/__init__.py".
     """
-    def __init__(self, args, device):
+    def __init__(self, args, device, use_fast=False):
         self.data_type = args.DATA_TYPE
+        self.use_fast = use_fast
         self.lpips_fn = lpips.LPIPS(net='alex').cuda()
         self.fast_ssim = SSIM()
         self.fast_psnr = PSNR()
         self.matlab_ssim = MATLAB_SSIM(device=device)
 
     def compute(self, out_img, gt): # only PSNR is calculated while training
-        if self.data_type == 'UHDM':
+        if self.use_fast:
             res_psnr = self.fast_psnr_ssim(out_img, gt)
-        elif self.data_type == 'FHDMi':
-            res_psnr = self.skimage_psnr_ssim(out_img, gt)
-        elif self.data_type == 'TIP':
-            res_psnr = self.matlab_psnr_ssim(out_img, gt)
-        elif self.data_type == 'AIM':
-            res_psnr = self.aim_psnr_ssim(out_img, gt)
         else:
-            print('Unrecognized data_type for evaluation!')
-            raise NotImplementedError
+            if self.data_type == 'UHDM':
+                res_psnr = self.fast_psnr_ssim(out_img, gt)
+            elif self.data_type == 'FHDMi':
+                res_psnr = self.skimage_psnr_ssim(out_img, gt)
+            elif self.data_type == 'TIP':
+                res_psnr = self.matlab_psnr_ssim(out_img, gt)
+            elif self.data_type == 'AIM':
+                res_psnr = self.aim_psnr_ssim(out_img, gt)
+            else:
+                print('Unrecognized data_type for evaluation!')
+                raise NotImplementedError
         #pre = torch.clamp(out_img, min=0, max=1)
         #tar = torch.clamp(gt, min=0, max=1)
 
