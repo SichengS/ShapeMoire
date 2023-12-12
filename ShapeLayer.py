@@ -12,9 +12,9 @@ from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
 
 
-class ShapeConv2d(Module):
+class ShapeLayer2d(Module):
     """
-       ShapeConv2d can be used as an alternative for torch.nn.Conv2d.
+       ShapeLayer2d can be used as an alternative for torch.nn.Conv2d.
     """
     __constants__ = ['stride', 'padding', 'dilation', 'groups',
                      'padding_mode', 'output_padding', 'in_channels',
@@ -23,7 +23,7 @@ class ShapeConv2d(Module):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride=1,
                  padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros', D_mul=None):
-        super(ShapeConv2d, self).__init__()
+        super(ShapeLayer2d, self).__init__()
 
         kernel_size = _pair(kernel_size)
         stride = _pair(stride)
@@ -96,7 +96,7 @@ class ShapeConv2d(Module):
         return s.format(**self.__dict__)
 
     def __setstate__(self, state):
-        super(ShapeConv2d, self).__setstate__(state)
+        super(ShapeLayer2d, self).__setstate__(state)
         if not hasattr(self, 'padding_mode'):
             self.padding_mode = 'zeros'
 
@@ -138,8 +138,8 @@ class ShapeConv2d(Module):
     def _load_from_state_dict(self, state_dict, prefix, local_metadata, strict,
                               missing_keys, unexpected_keys, error_msgs):
         self.testing = not self.training
-        super(ShapeConv2d, self)._load_from_state_dict(state_dict, prefix, local_metadata, strict,
-                                                       missing_keys, unexpected_keys, error_msgs)
+        super(ShapeLayer2d, self)._load_from_state_dict(state_dict, prefix, local_metadata, strict,
+                                                        missing_keys, unexpected_keys, error_msgs)
         if self.kernel_size[0] * self.kernel_size[1] > 1 and not self.training:
             self.weight.data = self.compute_shape_w()
 

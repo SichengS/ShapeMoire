@@ -1,7 +1,4 @@
-"""
-A pytorch implementation for reproducing results in MATLAB, slightly modified from
-https://github.com/mayorx/matlab_ssim_pytorch_implementation.
-"""
+
 
 import torch
 import cv2

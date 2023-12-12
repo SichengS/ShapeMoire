@@ -58,6 +58,11 @@ Pytorch implementation of [ShapeMoire: Channel-Wise Shape-Based Network for Imag
     |   |---LCDMoire/
     |   |   |---train/
     |   |   |---test/
+    |---dataset/
+    |---model/
+    |---utils/
+    |---train.py
+    |---test.py
     ```
 
 ### Modeling 
@@ -72,7 +77,7 @@ Pytorch implementation of [ShapeMoire: Channel-Wise Shape-Based Network for Imag
     ```
 
     Note: 
-    * **The default config file is defined to train Shapemoire**. For training baseline model, modify config with 'USE_BASELINE: True'.
+    * **The default config file is defined to train ShapeMoire**. For training baseline model, modify config with 'USE_BASELINE: True'.
     * For ESDNet, in order to train ESDNet-L, modify config with 'SAM_NUM:2'.
 
 

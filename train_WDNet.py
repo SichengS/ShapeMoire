@@ -19,7 +19,7 @@ from utils.metric_train import create_metrics
 if args.USE_BASELINE:
     from model.model_dense import *
 else:
-    from model.model_shapeconv import *
+    from model.model_shapelayer import *
     # args.EXP_NAME = 'ShapeMoire'
 
 def compute_l1_loss(input, output):
@@ -77,9 +77,7 @@ def predict_img(net,
     return imgout
 
 class LossNetwork(torch.nn.Module):
-    """Reference:
-        https://discuss.pytorch.org/t/how-to-extract-features-of-an-image-from-a-trained-model/119/3
-    """
+
 
     def __init__(self):
         super(LossNetwork, self).__init__()

@@ -5,18 +5,18 @@ import torchvision.models.vgg as vgg
 import pdb
 import math
 import numpy as np
-from sam_shapeconv import *
+from sam_shapelayer import *
 import pickle
 import os
 import matplotlib 
 from matplotlib import pyplot as plt 
-from ShapeConv import ShapeConv2d
+from ShapeLayer import ShapeLayer2d
 
 
 matplotlib.rcParams['backend'] = "Agg" 
 
 class WaveletTransform(nn.Module): 
-    def __init__(self, scale=1, dec=True, params_path='/home/sshen/WDNet/wavelet_weights_c2.pkl', transpose=True):
+    def __init__(self, scale=1, dec=True, params_path='./model/wavelet_weights_c2.pkl', transpose=True):
         super(WaveletTransform, self).__init__()
         
         self.scale = scale
@@ -27,12 +27,12 @@ class WaveletTransform(nn.Module):
         nc = 3 * ks * ks
         
         if dec:
-          self.conv = ShapeConv2d(in_channels=3, out_channels=nc, kernel_size=ks, stride=ks, padding=0, groups=3, bias=False)
+          self.conv = ShapeLayer2d(in_channels=3, out_channels=nc, kernel_size=ks, stride=ks, padding=0, groups=3, bias=False)
         else:
           self.conv = nn.ConvTranspose2d(in_channels=nc, out_channels=3, kernel_size=ks, stride=ks, padding=0, groups=3, bias=False)
         
         for m in self.modules():
-            if isinstance(m, ShapeConv2d) or isinstance(m, nn.ConvTranspose2d):
+            if isinstance(m, ShapeLayer2d) or isinstance(m, nn.ConvTranspose2d):
                 f = open(params_path,'rb')
                 u = pickle._Unpickler(f)
                 u.encoding = 'latin1'
@@ -291,8 +291,8 @@ def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=
     p = pad(pad_type, padding) if pad_type and pad_type != 'zero' else None
     padding = padding if pad_type == 'zero' else 0
 
-    c = ShapeConv2d(in_nc, out_nc, kernel_size=kernel_size, stride=stride, padding=padding, \
-            dilation=dilation, bias=bias, groups=groups)
+    c = ShapeLayer2d(in_nc, out_nc, kernel_size=kernel_size, stride=stride, padding=padding, \
+                     dilation=dilation, bias=bias, groups=groups)
     a = act(act_type) if act_type else None
     if 'CNA' in mode:
         n = norm(norm_type, out_nc) if norm_type else None
@@ -536,7 +536,7 @@ class Discriminator(nn.Module):
 
         def discriminator_block(in_filters, out_filters, normalization=True):
             """Returns downsampling layers of each discriminator block"""
-            layers = [ShapeConv2d(in_filters, out_filters, 4, stride=2, padding=1)]
+            layers = [ShapeLayer2d(in_filters, out_filters, 4, stride=2, padding=1)]
             if normalization:
                 layers.append(nn.InstanceNorm2d(out_filters))
             layers.append(nn.LeakyReLU(0.2, inplace=True))
@@ -550,7 +550,7 @@ class Discriminator(nn.Module):
             #nn.Dropout(0.3)
             
             nn.ZeroPad2d((1, 0, 1, 0)),
-            ShapeConv2d(512, 1, 4, padding=1, bias=False),
+            ShapeLayer2d(512, 1, 4, padding=1, bias=False),
             nn.Sigmoid()
         )
 
@@ -569,9 +569,9 @@ class ChannelAttention(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.max_pool = nn.AdaptiveMaxPool2d(1)
 
-        self.fc1   = ShapeConv2d(in_planes, in_planes // 16, 1, bias=False)
+        self.fc1   = ShapeLayer2d(in_planes, in_planes // 16, 1, bias=False)
         self.relu1 = nn.ReLU()
-        self.fc2   = ShapeConv2d(in_planes // 16, in_planes, 1, bias=False)
+        self.fc2   = ShapeLayer2d(in_planes // 16, in_planes, 1, bias=False)
 
         self.sigmoid = nn.Sigmoid()
 

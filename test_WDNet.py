@@ -21,7 +21,7 @@ criterion_GAN = torch.nn.MSELoss()
 if args.USE_BASELINE:
     from model.model_dense import *
 else:
-    from model.model_shapeconv import *
+    from model.model_shapelayer import *
     # args.EXP_NAME= 'ShapeMoire'
 
 class LossNetwork(torch.nn.Module):

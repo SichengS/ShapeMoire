@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 from collections import OrderedDict
 import pdb
-from ShapeConv import ShapeConv2d
+from ShapeLayer import ShapeLayer2d
 
 class ChannelAttention(nn.Module):
     def __init__(self, in_planes, ratio=16):
@@ -11,9 +11,9 @@ class ChannelAttention(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.max_pool = nn.AdaptiveMaxPool2d(1)
 
-        self.fc1   = ShapeConv2d(in_planes, in_planes // 8, 1, bias=False)
+        self.fc1   = ShapeLayer2d(in_planes, in_planes // 8, 1, bias=False)
         self.relu1 = nn.ReLU()
-        self.fc2   = ShapeConv2d(in_planes // 8, in_planes, 1, bias=False)
+        self.fc2   = ShapeLayer2d(in_planes // 8, in_planes, 1, bias=False)
 
         self.sigmoid = nn.Sigmoid()
 
@@ -30,7 +30,7 @@ class SpatialAttention(nn.Module):
         assert kernel_size in (3, 7), 'kernel size must be 3 or 7'
         padding = 3 if kernel_size == 7 else 1
 
-        self.conv1 = ShapeConv2d(2, 1, kernel_size, padding=padding, bias=False)
+        self.conv1 = ShapeLayer2d(2, 1, kernel_size, padding=padding, bias=False)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -46,24 +46,24 @@ class SpatialAttention(nn.Module):
 
 ###### Layer
 def conv1x1(in_channels, out_channels, stride=1):
-    return ShapeConv2d(in_channels, out_channels, kernel_size=1,
-                     stride=stride, padding=0, bias=False)
+    return ShapeLayer2d(in_channels, out_channels, kernel_size=1,
+                        stride=stride, padding=0, bias=False)
 
 
 def conv3x3(in_channels, out_channels, stride=1):
-    return ShapeConv2d(in_channels, out_channels, kernel_size=3,
-                     stride=stride, padding=1, bias=False)
+    return ShapeLayer2d(in_channels, out_channels, kernel_size=3,
+                        stride=stride, padding=1, bias=False)
 
 
 class Bottleneck(nn.Module):
     def __init__(self, in_channels, out_channels, ):
         super(Bottleneck, self).__init__()
         m = OrderedDict()
-        m['conv1'] = ShapeConv2d(in_channels, out_channels, kernel_size=1, bias=False)
+        m['conv1'] = ShapeLayer2d(in_channels, out_channels, kernel_size=1, bias=False)
         m['relu1'] = nn.ReLU(True)
-        m['conv2'] = ShapeConv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=2, bias=False, dilation=2)
+        m['conv2'] = ShapeLayer2d(out_channels, out_channels, kernel_size=3, stride=1, padding=2, bias=False, dilation=2)
         m['relu2'] = nn.ReLU(True)
-        m['conv3'] = ShapeConv2d(out_channels, out_channels, kernel_size=1, bias=False)
+        m['conv3'] = ShapeLayer2d(out_channels, out_channels, kernel_size=1, bias=False)
         self.group1 = nn.Sequential(m)
         self.relu = nn.Sequential(nn.ReLU(True))
 
@@ -128,20 +128,12 @@ class Attention(nn.Module):
     def __init__(self, in_channels):
         super(Attention, self).__init__()
         self.out_channels = int(in_channels / 2)
-        #self.conv1 = ShapeConv2d(in_channels, self.out_channels, kernel_size=3, padding=1, stride=1)
-        #self.relu1 = nn.ReLU()
-        #self.conv2 = ShapeConv2d(self.out_channels, self.out_channels, kernel_size=3, padding=1, stride=1)
-        #self.relu2 = nn.ReLU()
-        self.conv3 = ShapeConv2d(64, 8, kernel_size=1, padding=0, stride=1)
+        self.conv3 = ShapeLayer2d(64, 8, kernel_size=1, padding=0, stride=1)
         self.relu3 = nn.ReLU()
         self.ca = ChannelAttention(8)
         self.sa = SpatialAttention()
 
     def forward(self, x):
-        #out = self.conv1(x)
-        #out = self.relu1(out)
-        #out = self.conv2(out)
-        #out = self.relu2(out)
         out = self.conv3(x)
         out = self.relu3(out)
         out = self.ca(out) * out
@@ -159,9 +151,9 @@ class SAM(nn.Module):
         self.conv_in = conv3x3(in_channels, self.out_channels)
         self.relu1 = nn.ReLU(True)
 
-        self.conv1 = ShapeConv2d(64 , self.out_channels , kernel_size=1, stride=1, padding=0)
-        self.conv2 = ShapeConv2d(self.out_channels * 8, self.out_channels, kernel_size=1, stride=1, padding=0)
-        self.conv3 = ShapeConv2d(self.out_channels * 8, self.out_channels, kernel_size=1, stride=1, padding=0)
+        self.conv1 = ShapeLayer2d(64, self.out_channels, kernel_size=1, stride=1, padding=0)
+        self.conv2 = ShapeLayer2d(self.out_channels * 8, self.out_channels, kernel_size=1, stride=1, padding=0)
+        self.conv3 = ShapeLayer2d(self.out_channels * 8, self.out_channels, kernel_size=1, stride=1, padding=0)
         self.relu2 = nn.ReLU(True)
         self.attention = attention
         if self.attention:

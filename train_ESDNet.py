@@ -91,7 +91,7 @@ def init():
     return logger, device
 
 def load_checkpoint(model, optimizer, args):
-    load_dir = os.path.join(args.NETS_DIR, '/checkpoint' + '_' + '%06d' % args.LOAD_EPOCH + '.tar')#'/home/sshen/UHDM/out_dir/uhdm/ShapeMoire/ShapeConv/net_checkpoints/checkpoint_000070.tar'
+    load_dir = os.path.join(args.NETS_DIR, '/checkpoint' + '_' + '%06d' % args.LOAD_EPOCH + '.tar')
     print('Loading pre-trained checkpoint %s' % load_dir)
     model_state_dict = torch.load(load_dir)['state_dict']
     model.load_state_dict(model_state_dict)
@@ -111,7 +111,7 @@ def main():
         from model.nets_vanilla import my_model
     else:
         from model.model_new import model_fn_decorator
-        from model.nets_vanilla_ShapeConv import my_model
+        from model.nets_vanilla_ShapeLayer import my_model
     model = my_model(en_feature_num=args.EN_FEATURE_NUM,
                      en_inter_num=args.EN_INTER_NUM,
                      de_feature_num=args.DE_FEATURE_NUM,

@@ -17,28 +17,7 @@ from math import exp
 
 
 class CosineAnnealingWarmRestarts(_LRScheduler):
-    r"""Set the learning rate of each parameter group using a cosine annealing
-    schedule, where :math:`\eta_{max}` is set to the initial lr, :math:`T_{cur}`
-    is the number of epochs since the last restart and :math:`T_{i}` is the number
-    of epochs between two warm restarts in SGDR:
-    .. math::
-        \eta_t = \eta_{min} + \frac{1}{2}(\eta_{max} - \eta_{min})\left(1 +
-        \cos\left(\frac{T_{cur}}{T_{i}}\pi\right)\right)
-    When :math:`T_{cur}=T_{i}`, set :math:`\eta_t = \eta_{min}`.
-    When :math:`T_{cur}=0` after restart, set :math:`\eta_t=\eta_{max}`.
-    It has been proposed in
-    `SGDR: Stochastic Gradient Descent with Warm Restarts`_.
-    Args:
-        optimizer (Optimizer): Wrapped optimizer.
-        T_0 (int): Number of iterations for the first restart.
-        T_mult (int, optional): A factor increases :math:`T_{i}` after a restart. Default: 1.
-        eta_min (float, optional): Minimum learning rate. Default: 0.
-        last_epoch (int, optional): The index of last epoch. Default: -1.
-        verbose (bool): If ``True``, prints a message to stdout for
-            each update. Default: ``False``.
-    .. _SGDR\: Stochastic Gradient Descent with Warm Restarts:
-        https://arxiv.org/abs/1608.03983
-    """
+
     def __init__(self, optimizer, T_0, T_mult=1, eta_min=0, last_epoch=-1, verbose=False):
         if T_0 <= 0 or not isinstance(T_0, int):
             raise ValueError("Expected positive integer T_0, but got {}".format(T_0))
@@ -254,10 +233,7 @@ def ssim(img1, img2, window_size=11, window=None, size_average=True, full=False,
 
 # Classes to re-use window
 class SSIM(torch.nn.Module):
-    """
-    Fast pytorch implementation for SSIM, referred from
-    "https://github.com/jorge-pessoa/pytorch-msssim/blob/master/pytorch_msssim/__init__.py"
-    """
+
     def __init__(self, window_size=11, size_average=True, val_range=None):
         super(SSIM, self).__init__()
         self.window_size = window_size

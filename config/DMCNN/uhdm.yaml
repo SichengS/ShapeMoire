@@ -3,7 +3,7 @@ GENERAL:
   SEED: 123
   WORKER: 8
   SAVE_PREFIX: './out_dir/uhdm'
-  EXP_NAME: 'exp_uhdm'
+  EXP_NAME: 'exp_dmcnn_uhdm'
   USE_BASELINE: False # If True, test the baseline model
 
 DATA:

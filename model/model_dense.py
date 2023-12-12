@@ -14,7 +14,7 @@ from matplotlib import pyplot as plt
 matplotlib.rcParams['backend'] = "Agg" 
 
 class WaveletTransform(nn.Module): 
-    def __init__(self, scale=1, dec=True, params_path='/home/sshen/WDNet/wavelet_weights_c2.pkl', transpose=True):
+    def __init__(self, scale=1, dec=True, params_path='./model/wavelet_weights_c2.pkl', transpose=True):
         super(WaveletTransform, self).__init__()
         
         self.scale = scale

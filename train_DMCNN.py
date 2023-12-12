@@ -10,7 +10,7 @@ from utils.metric_train import create_metrics
 if args.USE_BASELINE:
     from model.net import MoireCNN
 else:
-    from model.net_shapeconv import MoireCNN
+    from model.net_shapelayer import MoireCNN
     # args.EXP_NAME = 'ShapeMoire'
 
 

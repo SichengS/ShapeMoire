@@ -1,5 +1,5 @@
 from torch import nn
-from ShapeConv import ShapeConv2d
+from ShapeLayer import ShapeLayer2d
 from config.config import args
 import torchvision
 
@@ -7,7 +7,7 @@ import torchvision
 class MoireCNN(nn.Module):
 
     def conv_block(self, channels):
-        convs = [ShapeConv2d(channels, channels, 3, 1, 1), nn.ReLU(True)] * 5
+        convs = [ShapeLayer2d(channels, channels, 3, 1, 1), nn.ReLU(True)] * 5
         return nn.Sequential(*convs)
 
     def up_conv_block(self, *channels):
@@ -16,7 +16,7 @@ class MoireCNN(nn.Module):
         for num in range(layer_nums):
             up_convs += [nn.ConvTranspose2d(channels[num], channels[num + 1],
                                             4, 2, 1), nn.ReLU(True)]
-        up_convs += [ShapeConv2d(32, 3, 3, 1, 1)]
+        up_convs += [ShapeLayer2d(32, 3, 3, 1, 1)]
         return nn.Sequential(*up_convs)
 
     def __init__(self):
@@ -24,23 +24,23 @@ class MoireCNN(nn.Module):
         super().__init__()
 
         self.s11 = nn.Sequential(
-            ShapeConv2d(3, 32, 3, 1, 1),
+            ShapeLayer2d(3, 32, 3, 1, 1),
             nn.ReLU(True),
-            ShapeConv2d(32, 32, 3, 1, 1)
+            ShapeLayer2d(32, 32, 3, 1, 1)
         )
         self.s12 = self.up_conv_block()
         self.s13 = self.conv_block(32)
 
         self.s21 = nn.Sequential(
-            ShapeConv2d(32, 32, 3, 2, 1),
+            ShapeLayer2d(32, 32, 3, 2, 1),
             nn.ReLU(True),
-            ShapeConv2d(32, 64, 3, 1, 1)
+            ShapeLayer2d(32, 64, 3, 1, 1)
         )
         self.s22 = self.up_conv_block(64, 32)
         self.s23 = self.conv_block(64)
 
-        init_conv = [ShapeConv2d(64, 64, 3, 2, 1), nn.ReLU(True),
-                     ShapeConv2d(64, 64, 3, 1, 1)]
+        init_conv = [ShapeLayer2d(64, 64, 3, 2, 1), nn.ReLU(True),
+                     ShapeLayer2d(64, 64, 3, 1, 1)]
 
         self.s31 = nn.Sequential(*init_conv)
         self.s32 = self.up_conv_block(64, 64, 32)

@@ -12,9 +12,7 @@ class create_metrics():
        We note that for different benchmarks, previous works calculate metrics in different ways, which might
        lead to inconsistent SSIM results (and slightly different PSNR), and thus we follow their individual
        ways to compute metrics on each individual dataset for fair comparisons.
-       For our 4K dataset, calculating metrics for 4k image is much time-consuming,
-       thus we benchmark evaluations for all methods with a fast pytorch SSIM implementation referred from
-       "https://github.com/jorge-pessoa/pytorch-msssim/blob/master/pytorch_msssim/__init__.py".
+
     """
     def __init__(self, args, device, use_fast=False):
         self.data_type = args.DATA_TYPE
@@ -55,9 +53,7 @@ class create_metrics():
         return psnr
 
     def skimage_psnr_ssim(self, out_img, gt):
-        """
-        Same with the previous SOTA FHDe2Net: https://github.com/PKU-IMRE/FHDe2Net/blob/main/test.py
-        """
+
         mi1 = tensor2img(out_img)
         mt1 = tensor2img(gt)
         psnr = ski_psnr(mt1, mi1)
@@ -65,10 +61,7 @@ class create_metrics():
         return psnr
 
     def matlab_psnr_ssim(self, out_img, gt):
-        """
-        A pytorch implementation for reproducing SSIM results when using MATLAB
-        same with the previous SOTA MopNet: https://github.com/PKU-IMRE/MopNet/blob/master/test_with_matlabcode.m
-        """
+
         mi1 = tensor2img(out_img)
         mt1 = tensor2img(gt)
         psnr = ski_psnr(mt1, mi1)
@@ -76,9 +69,7 @@ class create_metrics():
         return psnr
 
     def aim_psnr_ssim(self, out_img, gt):
-        """
-        Same with the previous SOTA MBCNN: https://github.com/zhenngbolun/Learnbale_Bandpass_Filter/blob/master/main_multiscale.py
-        """
+
         mi1 = tensor2img(out_img)
         mt1 = tensor2img(gt)
         mi1 = mi1.astype(np.float32) / 255.0
