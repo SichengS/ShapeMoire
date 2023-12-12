@@ -8,8 +8,8 @@ GENERAL:
 
 DATA:
   DATA_TYPE: TIP # Please specify the type of the dataset (select from AIM/UHDM/FHDMi/TIP)
-  TRAIN_DATASET: ./TIP/train # The training data path
-  TEST_DATASET: ./TIP/test # The test data path
+  TRAIN_DATASET: ./data/TIP/train # The training data path
+  TEST_DATASET: ./data/TIP/test # The test data path
 
 MODEL:
   EN_FEATURE_NUM: 48 # The initial channel number of dense blocks of encoder

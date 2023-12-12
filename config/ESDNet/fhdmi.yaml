@@ -8,8 +8,8 @@ GENERAL:
 
 DATA:
   DATA_TYPE: FHDMi # Please specify the type of the dataset (select from AIM/UHDM/FHDMi/TIP)
-  TRAIN_DATASET: ./FHDMi/train # The training data path
-  TEST_DATASET: ./FHDMi/test # The test data path
+  TRAIN_DATASET: ./data/FHDMi/train # The training data path
+  TEST_DATASET: ./data/FHDMi/test # The test data path
 
 MODEL:
   EN_FEATURE_NUM: 48 # The initial channel number of dense blocks of encoder
