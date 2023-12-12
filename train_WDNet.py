@@ -10,17 +10,17 @@ from torchvision import datasets
 from torch.autograd import Variable
 from config.config import args
 from tqdm import tqdm
-from load_data import * 
+from dataset.load_data import *
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from utils.metric_train import create_metrics
 
-if args.TEST_BASELINE:
-    from model_dense import *
+if args.USE_BASELINE:
+    from model.model_dense import *
 else:
-    from model_shapeconv import *
-    args.EXP_NAME = 'ShapeMoire'
+    from model.model_shapeconv import *
+    # args.EXP_NAME = 'ShapeMoire'
 
 def compute_l1_loss(input, output):
     return torch.mean(torch.abs(input-output))
@@ -242,7 +242,7 @@ for epoch in range(args.LOAD_EPOCH+1, args.EPOCHS+1):
 
         
         #ShapeMoire
-        if not args.TEST_BASELINE:
+        if not args.USE_BASELINE:
             base_img_train = torch.mean(img_train, dim = [2,3], keepdim = True)
             shape_img_train = img_train - base_img_train
             img_train = torch.cat((img_train, shape_img_train), dim=0)
@@ -316,7 +316,7 @@ for epoch in range(args.LOAD_EPOCH+1, args.EPOCHS+1):
     if epoch >= 1:#args.EPOCHS/2:
         args.BATCH_SIZE = 1
         TestImgLoader = create_dataset(args, data_path=args.TEST_DATASET, mode='test')
-        compute_metrics = create_metrics(args, device=device)
+        compute_metrics = create_metrics(args, device=device, use_fast=True)
         tbar = tqdm(TestImgLoader)
 
         for batch_idx, data in enumerate(tbar):

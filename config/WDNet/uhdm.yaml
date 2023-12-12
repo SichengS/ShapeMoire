@@ -3,13 +3,13 @@ GENERAL:
   SEED: 123
   WORKER: 8
   SAVE_PREFIX: './out_dir/uhdm'
-  EXP_NAME: 'NoShape'
-  TEST_BASELINE: True # If True, test the baseline model
+  EXP_NAME: 'exp_uhdm'
+  USE_BASELINE: False # If True, test the baseline model
 
 DATA: 
   DATA_TYPE: UHDM
-  TRAIN_DATASET: /home/sshen/datasets/UHDM/train # The training data path, e.g., ./uhdm_data/Train
-  TEST_DATASET: /home/sshen/datasets/UHDM/test # The test data path, e.g., ./uhdm_data/Test
+  TRAIN_DATASET: ./data/UHDM/train # The training data path, e.g., ./uhdm_data/Train
+  TEST_DATASET: ./data/UHDM/test # The test data path, e.g., ./uhdm_data/Test
 
 MODEL:
   EN_FEATURE_NUM: 48 # The initial channel number of dense blocks of encoder
@@ -31,7 +31,7 @@ TRAIN:
 TEST:
   TEST_EPOCH: auto # Input 'auto' for loading the latest model
   SAVE_IMG: jpg # The file type (e.g., jpg, png) for saving the output image; set False to avoid saving
-  LOAD_PATH: /home/sshen/WDNet/saved_models/UHDM/NoShape/net_checkpoints/uhdm_bs_epoch54_24.1145.pth # If specify a load path for a checkpoint, TEST_EPOCH will be deprecated
+  LOAD_PATH: False # If specify a load path for a checkpoint, TEST_EPOCH will be deprecated
   EVALUATION_METRIC: True # If True, calculate metrics
   EVALUATION_TIME: False # If True, calculate processing time per image; EVALUATION_METRIC will be deprecated for accurate statistics
   EVALUATION_COST: False #If True, calculate MACs and Parameters number
@@ -42,3 +42,14 @@ SOLVER:
   T_MULT: 1 # The learning cycle would be (T_0, T_0*T_MULT, T_0*T_MULT^2, T_0*T_MULT^3, ...)
   ETA_MIN: 0.000001 # Initial learning rate in each learning cycle
   BASE_LR: 0.0002 # Learning rate in the end of each learning cycle
+
+WDNet:
+  b1: 0.5 #adam: decay of first order momentum of gradient
+  b2: 0.999 #adam: decay of first order momentum of gradient
+  decay_epoch: 40 #epoch from which to start lr decay
+  n_cpu: 8 #number of cpu threads to use during batch generation
+  img_height: 256 #size of image height
+  img_width: 256 #size of image width
+  channels: 3 #number of image channels
+  sample_interval: 500 #interval between sampling of images from generators
+  checkpoint_interval: 1 #interval between model checkpoints

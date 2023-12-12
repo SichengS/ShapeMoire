@@ -12,17 +12,17 @@ from torchvision import transforms
 from skimage import measure
 from skimage import color
 from config.config import args
-from load_data import * 
+from dataset.load_data import *
 from tqdm import tqdm
 from utils.metric import create_metrics
 import torchvision
 criterion_GAN = torch.nn.MSELoss()
 
-if args.TEST_BASELINE:
-    from model_dense import *
+if args.USE_BASELINE:
+    from model.model_dense import *
 else:
-    from model_shapeconv import *
-    args.EXP_NAME= 'ShapeMoire' 
+    from model.model_shapeconv import *
+    # args.EXP_NAME= 'ShapeMoire'
 
 class LossNetwork(torch.nn.Module):
 
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     Test_path = args.TEST_DATASET
     args.BATCH_SIZE = 1
     TestImgLoader = create_dataset(args, data_path=Test_path, mode='test')
-    compute_metrics = create_metrics(args, device=device)
+    compute_metrics = create_metrics(args, device=device, use_fast=True)
 
     #log=open('result.txt','w')
 
