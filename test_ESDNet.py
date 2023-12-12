@@ -13,8 +13,8 @@ import torch.nn as nn
 from tensorboardX import SummaryWriter
 import torch.optim as optim
 import os
-from model.model_vanilla import model_fn_decorator
-from model.nets_vanilla import my_model
+# from model.model_vanilla import model_fn_decorator
+# from model.nets_vanilla import my_model
 from dataset.load_data import *
 from tqdm import tqdm
 from utils.loss_util import *
@@ -127,7 +127,12 @@ def set_logging(log_path):
 def main():
     device = init()
     # load model
-    
+    if args.USE_BASELINE:
+        from model.model_vanilla import model_fn_decorator
+        from model.nets_vanilla import my_model
+    else:
+        from model.model_new import model_fn_decorator
+        from model.nets_vanilla_ShapeConv import my_model
     model = my_model(en_feature_num=args.EN_FEATURE_NUM,
                      en_inter_num=args.EN_INTER_NUM,
                      de_feature_num=args.DE_FEATURE_NUM,

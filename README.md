@@ -49,7 +49,7 @@ Pytorch implementation of [ShapeMoire: Channel-Wise Shape-Based Network for Imag
     |   |---FHDMi/
     |   |   |---train/
     |   |   |---test/
-    |   |---TIP2018/
+    |   |---TIP/
     |   |   |---train/
     |   |   |---test/
     |   |---UHDM/
@@ -68,11 +68,11 @@ Pytorch implementation of [ShapeMoire: Channel-Wise Shape-Based Network for Imag
     Run the following command to start a training process. You should **specify the model and dataset before training**. 
 
     ```bash
-    python train_{MODEL_NAME}.py --config {DATASET_NAME}.yaml
+    python train_{MODEL_NAME}.py --config configs/{MODEL_NAME}/{DATASET_NAME}.yaml
     ```
 
     Note: 
-    * **The default config file is defined to train Shapemoire**. For training baseline model, modify config with 'TEST_BASELINE: True'.
+    * **The default config file is defined to train Shapemoire**. For training baseline model, modify config with 'USE_BASELINE: True'.
     * For ESDNet, in order to train ESDNet-L, modify config with 'SAM_NUM:2'.
 
 
@@ -83,7 +83,7 @@ Pytorch implementation of [ShapeMoire: Channel-Wise Shape-Based Network for Imag
     Except for choosing model and dataset, You need to **specify the checkpoint using the parameter 'LOAD_PATH'** within config. 
 
     ```bash 
-    python test_{MODEL_NAME}.py --config {DATASET_NAME}.yaml
+    python test_{MODEL_NAME}.py --config configs/{MODEL_NAME}/{DATASET_NAME}.yaml
     ```
 
 

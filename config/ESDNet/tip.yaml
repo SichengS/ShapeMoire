@@ -3,19 +3,20 @@ GENERAL:
   SEED: 123
   WORKER: 8
   SAVE_PREFIX: './out_dir/tip'
-  EXP_NAME: 'exp_large'
+  EXP_NAME: 'exp_tip'
+  USE_BASELINE: False
 
 DATA:
   DATA_TYPE: TIP # Please specify the type of the dataset (select from AIM/UHDM/FHDMi/TIP)
-  TRAIN_DATASET: # The training data path, e.g., ./uhdm_data/Train
-  TEST_DATASET: # The test data path, e.g., ./uhdm_data/Test
+  TRAIN_DATASET: ./TIP/train # The training data path
+  TEST_DATASET: ./TIP/test # The test data path
 
 MODEL:
   EN_FEATURE_NUM: 48 # The initial channel number of dense blocks of encoder
   EN_INTER_NUM: 32 # The growth rate (intermediate channel number) of dense blocks of encoder
   DE_FEATURE_NUM: 64 # The initial channel number of dense blocks of decoder
   DE_INTER_NUM: 32 # The growth rate (intermediate channel number) of dense blocks of decoder
-  SAM_NUMBER: 2 # The number of SAM for each encoder or decoder level; set 1 for our ESDNet, and 2 for ESDNet-L
+  SAM_NUMBER: 1 # The number of SAM for each encoder or decoder level; set 1 for our ESDNet, and 2 for ESDNet-L
 
 TRAIN:
   BATCH_SIZE: 2
