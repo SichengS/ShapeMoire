@@ -2,8 +2,8 @@ GENERAL:
   GPU_ID: 3
   SEED: 123
   WORKER: 8
-  SAVE_PREFIX: './out_dir/aim'
-  EXP_NAME: 'exp_wdnet_aim'
+  SAVE_PREFIX: './out_dir/lcdmoiré'
+  EXP_NAME: 'exp_wdnet_lcdmoiré'
   USE_BASELINE: False # If True, test the baseline model
 
 DATA:

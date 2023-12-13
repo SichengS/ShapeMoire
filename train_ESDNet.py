@@ -10,8 +10,6 @@ import torch.nn as nn
 from tensorboardX import SummaryWriter
 import torch.optim as optim
 import os
-# from model.model_vanilla import model_fn_decorator
-# from model.nets_vanilla import my_model
 from dataset.load_data import *
 from tqdm import tqdm
 from utils.loss_util import *

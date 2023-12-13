@@ -1,5 +1,5 @@
 """
-Implementation of ESDNet for image demoireing
+Implementation of ESDNet for image demoiréing
 """
 
 

@@ -20,7 +20,6 @@ if args.USE_BASELINE:
     from model.model_dense import *
 else:
     from model.model_shapelayer import *
-    # args.EXP_NAME = 'ShapeMoire'
 
 def compute_l1_loss(input, output):
     return torch.mean(torch.abs(input-output))
@@ -239,7 +238,7 @@ for epoch in range(args.LOAD_EPOCH+1, args.EPOCHS+1):
         label = data['label'].cuda()
 
         
-        #ShapeMoire
+        #ShapeMoiré
         if not args.USE_BASELINE:
             base_img_train = torch.mean(img_train, dim = [2,3], keepdim = True)
             shape_img_train = img_train - base_img_train
