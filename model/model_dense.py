@@ -431,7 +431,7 @@ class RRDB(nn.Module):
 
 class DMDB2(nn.Module):
     """
-    DeMoireing  Dense Block
+    DeMoiréing  Dense Block
     """
 
     def __init__(self, nc, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \

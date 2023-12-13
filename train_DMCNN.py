@@ -11,7 +11,6 @@ if args.USE_BASELINE:
     from model.net import MoireCNN
 else:
     from model.net_shapelayer import MoireCNN
-    # args.EXP_NAME = 'ShapeMoire'
 
 
 def train(model, train_loader, criterion, epoch, lr, device, iters, optimizer):
